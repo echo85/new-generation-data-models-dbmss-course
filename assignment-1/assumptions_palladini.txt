@@ -1,0 +1,3 @@
+First, we assume that the conceptual class diagram reports the annual amount of instances for classes and relations.
+We assume that the number of users is fixed, since the text does not specify the possibility of further registration.
+Since the number of categories is not given, we assume that they are 100, which can be a reasonable number of categories.
