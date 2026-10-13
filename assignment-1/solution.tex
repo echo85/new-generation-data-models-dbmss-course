@@ -18,28 +18,55 @@
 
 \begin{document}
 
-\title{Assignment 1 - Crowdfunding Company}
+\title{New Generation Data Models and Dbmss Course - Assignment 1 - Crowdfunding Company}
 
-\author*[1]{\fnm{Carlo} \sur{Falchi}}\email{carlo.falchi@studenti.unimi.it}
-\author*[1]{\fnm{Francesco} \sur{}}\email{francesco.palladini@studenti.unimi.it}
+\author*[1]{\fnm{Carlo} \sur{Falchi (Matr. 67340A)}}\email{carlo.falchi@studenti.unimi.it}
+\author*[1]{\fnm{Francesco} \sur{Palladini (Matr. 85652A)}}\email{francesco.palladini@studenti.unimi.it}
 \affil[1]{\orgdiv{Department of Computer Science}, \orgname{University of Milan}, \country{Italy}}
 
 \maketitle
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{uml/uml.png}
+    \includegraphics[width=0.9\textwidth]{uml/umlv2.png}
     \caption{UML Diagram}
      \label{fig:uml}
 \end{figure}
 \section{Solution}
 
 \subsection{Assumption}
+\begin{enumerate}
+\item First, we assume that the conceptual class diagram reports the annual amount of instances for classes and relations.
+\item We assume that the number of users is fixed, since the text does not specify the possibility of further registration.
+\item Since the number of categories is not given, we assume that they are 100, which can be a reasonable number of categories.
+\end{enumerate}
 \subsection{Constraints}
+The following constraints can be identified in the considered domain. Note that we report only the
+constraints that are not already included in the representation of the class diagram:
+\begin{enumerate}
+\item The password field of the Member class is an encrypted field
+\item A campaign is succesfull if the total amount pledged meets or exceeds the funding goal
+\item A pledge and its timestamp should be created only within the date range (start\_date, end\_date) of the campaign
+\item The IBAN of the creator should have a  length between 15 and 34 characters long and comply with the ISO 13616 standard
+\item The SwiftCode should follow the ISO 9362 standard and being between 8 and 11 characters
+\item When the campaign ends and is successful, the pledged funds are transferred from the backers to the creator
+\item The date of the transfer should be after the end\_date of the campaign
+\item Creator and Backers can leave feedback only after the campaign ends successfully
+\item Feedback consists of a numerical rating from 1 to 10
+\item The end date of the campaign should be a date later than the start date
+\end{enumerate}
 \subsection{Workload}
+
+The workload is shown in Figure \ref{fig:workload}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{uml/workload.png}
+    \includegraphics[width=0.9\textwidth]{uml/workloadv2.png}
     \caption{Representation Workload}
      \label{fig:workload}
 \end{figure}
+\begin{enumerate}
+    \item To identify the top 5 most competitive campaigns, we have to start from the Pledge, group by the Campaign and order by the total amount, then navigate to campaign to get title of the campaign. So the query path is (Pledge)->(Campaign)
+    \item TODO For each campaign creator, identify the category in which they achieved the highest average pledge amount.
+    \item TODO For each month in the last year, identify the top 10 creators per month, i.e., the creators who completed the highest number of successful campaigns in that month.
+\end{enumerate}
+
 \end{document}
