@@ -1,0 +1,9 @@
+Le immagini del modello concettuale e del workload sono scambiate
+
+In Campaign e Member l'unica chiave dovrebbe essere l'ID, perché è sufficiente a identificare le istanze delle due classi.
+
+Sostituire nella terza assumption "attibuted success" con "attribute successfull"
+
+Correggere la quarta assumption scrivendo "The attribute successful of Campaign" al posto di "The campaign successfull"
+
+Nel secondo workload va identificato anche il passaggio da Creator a Member attraverso la relazione di generalizzazione, e quindi va aggiunta la relativa freccia al diagramma.
