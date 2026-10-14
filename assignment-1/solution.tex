@@ -27,29 +27,31 @@
 \maketitle
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{uml/umlv2.png}
+    \includegraphics[width=0.9\textwidth]{uml/umlv3.png}
     \caption{UML Diagram}
      \label{fig:uml}
 \end{figure}
 \section{Solution}
-The class Member has been chosen as a generalization of the classes Creator and Backer, because this simplifies the identification of a member, and it is also useful to implement feedback and contact information. To each member is associated zero or one Contact information by means of an aggregation association, because many contact informations can participate in the association, while the member has only one contact information associated with him/her. Both Creator and Backer classes are associated with the class Campaign. A campaign can be created by only a creator. A backer can promise pledges, modeled by the association Pledges, to a number of campaigns between 200 and 3000, with an average of 1000, as specified in the text. The attributes of Pledge are the amount, timestamp and transfer, a boolean attribute which determines if the promised amount is transferred. Pledge is connected to Transfer class, a class which represents the transfer of money, by the association transferredTo: more pledges can be transferred to a transfer, but each pledge can be associated only to a transfer. The class Category associated with campaign has the purpose of answering the second query, which otherwise would not be able to execute. A campaign can be associated to only one category, while a category can be associated with more campaigns. Finally, we have the class Feedback, which is a weak class identified by Member and Campaign. This class has a maximum of 2 billion instances, because we have annually 100.000 users and 2 millions of campaigns, so the multiplication of the number of users times the number of campaigns gives 2 billion total possible feedbacks per year. Of course 2 millions of feedbacks can be left by a user, while a user can be associated only with its feedbacks, and each campaign can receive 100.000 feedbacks, which is also the number of users, while a campaign is associated only with its feedbacks.
+The class Member has been chosen as a generalization of the classes Creator and Backer, because this simplifies the identification of a member, and it is also useful to implement feedback and contact information. To each member is associated zero or one Contact information. Both Creator and Backer classes are associated with the class Campaign. A campaign can be created by only a creator. A backer can promise pledges, modeled by the association Pledges, to a number of campaigns between 200 and 3000, with an average of 1000, as specified in the text. The attributes of Pledge are the amount, timestamp and transfer, a boolean attribute which determines if the promised amount is transferred. Pledge is connected to Transfer class, a class which represents the transfer of money, by the association transferredTo: more pledges can be transferred to a transfer, but each pledge can be associated only to a transfer. The class Category associated with campaign has the purpose of answering the second query, which otherwise would not be able to execute. A campaign can be associated to only one category, while a category can be associated with more campaigns. Finally, we have the class Feedback, which is a weak class identified by Member and Campaign. This class has a maximum of 2 billion instances, because we have annually 100.000 users and 2 millions of campaigns, so the multiplication of the number of users times the number of campaigns gives 2 billion total possible feedbacks per year. Of course 2 millions of feedbacks can be left by a user, while a user can be associated only with its feedbacks, and each campaign can receive 100.000 feedbacks, which is also the number of users, while a campaign is associated only with its feedbacks.
 
 \subsection{Assumption}
 \begin{enumerate}
 \item First, we assume that the conceptual class diagram reports the annual amount of instances for classes and relations.
-\item We assume that the number of users is fixed, since the text does not specify the possibility of further registration.
 \item Since the number of categories is not given, we assume that they are 100, which can be a reasonable number of categories.
+\item As the campaign period ends, and the system determines whether the campaign is successful, the attibuted success of the class Campaign is set to True
+\item The campaign succesfull has a default value of false
+
 \end{enumerate}
 \subsection{Constraints}
 The following constraints can be identified in the considered domain. Note that we report only the
 constraints that are not already included in the representation of the class diagram:
 \begin{enumerate}
 \item The password field of the Member class is an encrypted field
-\item A campaign is succesfull if the total amount pledged meets or exceeds the funding goal
+\item A campaign is succesfull if the total amount pledges meets or exceeds the funding goal
 \item A pledge and its timestamp should be created only within the date range (start\_date, end\_date) of the campaign
 \item The IBAN of the creator should have a  length between 15 and 34 characters long and comply with the ISO 13616 standard
 \item The SwiftCode should follow the ISO 9362 standard and being between 8 and 11 characters
-\item When the campaign ends and is successful, the pledged funds are transferred from the backers to the creator
+\item When the campaign ends and is successful, the pledges funds are transferred from the backers to the creator
 \item The date of the transfer should be after the end\_date of the campaign
 \item Creator and Backers can leave feedback only after the campaign ends successfully
 \item Feedback consists of a numerical rating from 1 to 10
@@ -61,14 +63,14 @@ constraints that are not already included in the representation of the class dia
 The workload is shown in Figure \ref{fig:workload}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{uml/workloadv2.png}
+    \includegraphics[width=0.9\textwidth]{uml/workloadv3.png}
     \caption{Representation Workload}
      \label{fig:workload}
 \end{figure}
 \begin{enumerate}
-    \item To identify the top 5 most competitive campaigns, we have to start from the Pledge, group by the Campaign and order by the total amount, then navigate to campaign to get title of the campaign. So the query path is (Pledge)->(Campaign)
-    \item TODO For each campaign creator, identify the category in which they achieved the highest average pledge amount.
-    \item TODO For each month in the last year, identify the top 10 creators per month, i.e., the creators who completed the highest number of successful campaigns in that month.
-\end{enumerate}
+    \item To identify the top 5 most competitive campaigns, the entry point is the class Pledge, they are grouped by Campaign and ordered by the total number of pledges, then navigate to campaign to get title of the campaign. So the query path is (Pledge)$\to$(Campaign)
+    \item The entry point is the Creator class, then we identify the category trough the campaign and get the highest average pledge amount in the Pledge class. Query path is (Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of categories
+    \item To identify the top 10 creators per month in the last year by number of successful campaigns, the entry point is the class Campaign. Campaigns are filtered by successful and end\_date within the last year, and then grouped by the month of end\_date and by their creator, navigating to the Creator class to order and select the top 10 creators for each month. So, the query path is (Campaign)$\underset{createdBy}{\to}$(Creator).
+\end{enumerate} 
 
 \end{document}
