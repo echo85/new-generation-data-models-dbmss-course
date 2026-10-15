@@ -106,7 +106,7 @@
         <mxCell id="-7c-AwmOedMffqvGcr_5-64" parent="9u0K4C_oitUDEyzZZosL-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="ID: integer&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;K" vertex="1">
           <mxGeometry height="30" width="150" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="9u0K4C_oitUDEyzZZosL-6" parent="9u0K4C_oitUDEyzZZosL-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="title: string&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;K" vertex="1">
+        <mxCell id="9u0K4C_oitUDEyzZZosL-6" parent="9u0K4C_oitUDEyzZZosL-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="title: string&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;" vertex="1">
           <mxGeometry height="30" width="150" y="60" as="geometry" />
         </mxCell>
         <mxCell id="9u0K4C_oitUDEyzZZosL-39" parent="9u0K4C_oitUDEyzZZosL-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="description: string" vertex="1">
@@ -330,6 +330,17 @@
         </mxCell>
         <mxCell id="RlWK8IpIVS7bP_wvUL81-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="cardType: {Visa, Mastercard, American Express}" vertex="1">
           <mxGeometry height="30" width="200" x="640" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="RlWK8IpIVS7bP_wvUL81-6" edge="1" parent="1" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;shadow=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="120" y="430" as="sourcePoint" />
+            <mxPoint x="130" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RlWK8IpIVS7bP_wvUL81-7" connectable="0" parent="RlWK8IpIVS7bP_wvUL81-6" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Q2" vertex="1">
+          <mxGeometry relative="1" x="-0.161" y="5" as="geometry">
+            <mxPoint x="27" as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
