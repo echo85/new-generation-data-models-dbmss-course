@@ -58,12 +58,12 @@ The figure \ref{fig:uml} shows the navigational path for the three worloads:
 \end{itemize}
 
 The figure \ref{fig:logical} reports the local model that we have realized taking into the account the above operations.
-The first operation uses a pledge as an entry point, the second uses Creator and the third uses Campaign,
+The first operation uses Pledge as an entry point, the second uses Creator and the third uses Campaign,
 Q1 and Q2 are in conflict because they have different directions, however the Campaign is used in all workloads.
-Furthermore given that a pledge can be assigned to only one Campaign we suggest using Campaign as entry point and thus collection and embedding 
+Furthermore given that a Pledge can be assigned to only one Campaign we suggest using Campaign as entry point and thus collection and embedding 
 pledge in it without risk of duplication.
 To improve the performance of the second operation (Campaign $\to$ Category) we embedded category inside the Campaign
-so we can avoid a lookup operation, it can introduces duplication but it is considered acceptable
+so we can avoid the lookup operation, it can introduces duplication but it is considered acceptable.
 Regarding the third operation (Campaign $\to$ Creator), which uses Campaign as entry point, it confirms
 the need to use campaign as a collection and Creator as a reference using a lookup to avoid duplication of Creators.
 The feedback collection has been embedded within campaign, given that there is a one-to-many relationship 
@@ -71,8 +71,9 @@ between campaign and feedback, and to avoid duplication we use a reference to th
 The Transfer collection has been created as a separate collection because it is
 not included in the most important workloads, we expect that a report or a page will request all transfers
 rarely so we can insert Campaign and Creator as a reference and use the lookup operation for them.
-Finally the member collection has been created as a entry point and a separate collection mostly for the second operation,
-optional contact information has been embedded in it.
+Finally the member collection has been created as a entry point and a separate collection mostly for to make
+second operation faster, optional contact information has been embedded in it but there are further improvements explained
+in the next section.
 
 \subsection{Design Patterns}
 
