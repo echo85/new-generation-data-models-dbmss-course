@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\title{New Generation Data Models and Dbmss Course - Assignment 1 - Crowdfunding Company}
+\title{New Generation Data Models and Dbmss Course - Assignment 2 - Crowdfunding Company}
 
 \author*[1]{\fnm{Carlo} \sur{Falchi (Matr. 67340A)}}\email{carlo.falchi@studenti.unimi.it}
 \author*[1]{\fnm{Francesco} \sur{Palladini (Matr. 85652A)}}\email{francesco.palladini@studenti.unimi.it}
@@ -40,7 +40,39 @@
     \caption{Logical Model}
      \label{fig:logical}
 \end{figure}
-\subsection{Operations}
+Workload to consider:
+\begin{enumerate}
+    \item Identify the top 5 most competitive campaigns, i.e., those that received the highest
+number of pledges.
+    \item For each campaign creator, identify the category in which they achieved the highest
+average pledge amount.
+    \item For each month in the last year, identify the top 10 creators per month, i.e., the creators
+who completed the highest number of successful campaigns in that month
+\end{enumerate}
+
+The figure \ref{fig:uml} shows the navigational path for the three worloads:
+\begin{itemize}
+    \item Q1:(Pledge)$\to$(Campaign)
+    \item Q2:((Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of categories
+    \item Q3:((Campaign)$\underset{createdBy}{\to}$(Creator)
+\end{itemize}
+
+The figure \ref{fig:logical} reports the local model that we have realized taking into the account the above operations.
+The first operation uses a pledge as an entry point, the second uses Creator and the third uses Campaign,
+Q1 and Q2 are in conflict because they have different directions, however the Campaign is used in all workloads.
+Furthermore given that a pledge can be assigned to only one Campaign we suggest using Campaign as entry point and thus collection and embedding 
+pledge in it without risk of duplication.
+To improve the performance of the second operation (Campaign $\to$ Category) we embedded category inside the Campaign
+so we can avoid a lookup operation, it can introduces duplication but it is considered acceptable
+Regarding the third operation (Campaign $\to$ Creator), which uses Campaign as entry point, it confirms
+the need to use campaign as a collection and Creator as a reference using a lookup to avoid duplication of Creators.
+The feedback collection has been embedded within campaign, given that there is a one-to-many relationship 
+between campaign and feedback, and to avoid duplication we use a reference to the Member class. 
+The Transfer collection has been created as a separate collection because it is
+not included in the most important workloads, we expect that a report or a page will request all transfers
+rarely so we can insert Campaign and Creator as a reference and use the lookup operation for them.
+Finally the member collection has been created as a entry point and a separate collection mostly for the second operation,
+optional contact information has been embedded in it.
 
 \subsection{Design Patterns}
 
