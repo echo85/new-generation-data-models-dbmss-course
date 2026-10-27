@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\title{New Generation Data Models and Dbmss Course - Assignment 2 - Crowdfunding Company}
+\title{New Generation Data Models and DBMSs Course - Assignment 2 - Crowdfunding Company}
 
 \author*[1]{\fnm{Carlo} \sur{Falchi (Matr. 67340A)}}\email{carlo.falchi@studenti.unimi.it}
 \author*[1]{\fnm{Francesco} \sur{Palladini (Matr. 85652A)}}\email{francesco.palladini@studenti.unimi.it}
@@ -32,47 +32,47 @@
      \label{fig:workload}
 \end{figure}
 \section{Solution}
-The class Member has been chosen as a generalization of the classes Creator and Backer, because this simplifies the identification of a member, and it is also useful to implement feedback and contact information. To each member is associated zero or one Contact information. Both Creator and Backer classes are associated with the class Campaign. A campaign can be created by only a creator. A backer can promise pledges, modeled by the association Pledges, to a number of campaigns between 200 and 3000, with an average of 1000, as specified in the text. The attributes of Pledge are the amount, timestamp and transfer, a boolean attribute which determines if the promised amount is transferred. Pledge is connected to Transfer class, a class which represents the transfer of money, by the association transferredTo: more pledges can be transferred to a transfer, but each pledge can be associated only to a transfer. The class Category associated with campaign has the purpose of answering the second query, which otherwise would not be able to execute. A campaign can be associated to only one category, while a category can be associated with more campaigns. Finally, we have the class Feedback, which is a weak class identified by Member and Campaign. This class has a maximum of 2 billion instances, because we have annually 100.000 users and 2 millions of campaigns, so the multiplication of the number of users times the number of campaigns gives 2 billion total possible feedbacks per year. Of course 2 millions of feedbacks can be left by a user, while a user can be associated only with its feedbacks, and each campaign can receive 100.000 feedbacks, which is also the number of users, while a campaign is associated only with its feedbacks.
+The class Member has been chosen as a generalization of the classes Creator and Backer, because this simplifies the identification of a member, and it is also useful to implement feedback and contact information. Each member is associated with zero or one Contact information. Both the Creator and Backer classes are associated with the class Campaign. A campaign can be created by only one creator. A backer can promise pledges, modeled by the association Pledges, to a number of campaigns between 200 and 3000, with an average of 1000, as specified in the text. The attributes of Pledge are the amount, timestamp, and transfer, a boolean attribute which determines if the promised amount is transferred. Pledge is connected to the Transfer class, a class which represents the transfer of money, by the association transferredTo: multiple pledges can be transferred to a transfer, but each pledge can be associated with only one transfer. The class Category associated with Campaign has the purpose of answering the second query, which otherwise could not be executed. A campaign can be associated with only one category, while a category can be associated with multiple campaigns. Finally, we have the class Feedback, which is a weak class identified by Member and Campaign. This class has a maximum of 2 billion instances, because we have annually 100,000 users and 2 million campaigns, so the multiplication of the number of users times the number of campaigns gives 2 billion total possible feedbacks per year. Of course, 2 million feedbacks can be left by a user, while a user can be associated only with their feedbacks, and each campaign can receive 100,000 feedbacks, which is also the number of users, while a campaign is associated only with its feedbacks.
 
 
 In the diagram we have considered the following structured types:
 \begin{itemize}
-    \item cardType: {Visa, Mastercard, American Express}
+    \item cardType: \{Visa, Mastercard, American Express\}
     \item periodType: Date x Date
 \end{itemize}
-\subsection{Assumption}
+\subsection{Assumptions}
 \begin{enumerate}
-\item First, we assume that the conceptual class diagram reports the annual amount of instances for classes and relations.
-\item Since the number of categories is not given, we assume that they are 100, which can be a reasonable number of categories.
-\item As the campaign period ends, and the system determines whether the campaign is successful, the attribute successful of the class Campaign is set to True
-\item The attribute successful of Campaig has a default value of false
-\item We assume the user will login to the platform using a email and a password, so we set email as key of the Member class
-\item We assume that the same backer can make multiple pledges to the same campaign with each pledge recorded separately along with its amount and timestamp.
-\item A feedback may be submitted only for successful campaigns. The campaign creator and each participating backer may submit at most one feedback item per campaign. 
-\item We assume the the Categories can changes, and new categories can be addedd over time. 
+\item First, we assume that the conceptual class diagram reports the annual number of instances for classes and relations.
+\item Since the number of categories is not given, we assume that there are 100, which is a reasonable number of categories.
+\item As the campaign period ends, and the system determines whether the campaign is successful, the attribute successful of the class Campaign is set to True.
+\item The attribute successful of Campaign has a default value of False.
+\item We assume the user will log in to the platform using an email and a password, so we set email as the key of the Member class.
+\item We assume that the same backer can make multiple pledges to the same campaign, with each pledge recorded separately along with its amount and timestamp.
+\item Feedback may be submitted only for successful campaigns. The campaign creator and each participating backer may submit at most one feedback item per campaign. 
+\item We assume that categories can change, and new categories can be added over time. 
 \end{enumerate}
 \subsection{Constraints}
 The following constraints can be identified in the considered domain. Note that we report only the
 constraints that are not already included in the representation of the class diagram:
 \begin{enumerate}
-\item The password field of the Member class is an encrypted field
-\item A campaign is succesfull if the total amount pledges meets or exceeds the funding goal
-\item A pledge and its timestamp should be created only within the date range (start\_date, end\_date) of the campaign
-\item The IBAN of the creator should have a  length between 15 and 34 characters long and comply with the ISO 13616 standard
-\item The SwiftCode should follow the ISO 9362 standard and being between 8 and 11 characters
-\item When the campaign ends and is successful, the pledges funds are transferred from the backers to the creator
-\item The date of the transfer should be after the end\_date of the campaign
-\item Creator and Backers can leave feedback only after the campaign ends successfully
-\item Feedback consists of a numerical rating from 1 to 10
-\item The end date of the campaign should be a date later than the start date
+\item The password field of the Member class is an encrypted field.
+\item A campaign is successful if the total amount of pledges meets or exceeds the funding goal.
+\item A pledge and its timestamp should be created only within the date range (period) of the campaign.
+\item The IBAN of the creator should have a length between 15 and 34 characters and comply with the ISO 13616 standard.
+\item The SwiftCode should follow the ISO 9362 standard and be between 8 and 11 characters.
+\item When the campaign ends and is successful, the pledged funds are transferred from the backers to the creator.
+\item The date of the transfer should be after the end (period) of the campaign.
+\item Creators and Backers can leave feedback only after the campaign ends successfully.
+\item Feedback consists of a numerical rating from 1 to 10.
+\item The end date of the campaign should be a date later than the start date.
 \item The attribute amount in Transfer is the sum of the amounts of the pledges involved in the transfer.
 \end{enumerate}
 \subsection{Workload}
 
-The workload is shown in Figure \ref{fig:workload}
+The workload is shown in Figure \ref{fig:workload}.
 \begin{enumerate}
-    \item To identify the top 5 most competitive campaigns, the entry point is the class Pledge, they are grouped by Campaign and ordered by the total number of pledges, then navigate to campaign to get title of the campaign. So the query path is (Pledge)$\to$(Campaign)
-    \item The entry point is the Creator class, then we identify the category trough the campaign and get the highest average pledge amount in the Pledge class. Query path is (Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of categories
+    \item To identify the top 5 most competitive campaigns, the entry point is the class Pledge. Pledges are grouped by Campaign and ordered by the total number of pledges, and then we navigate to Campaign to get the title of the campaign. So, the query path is (Pledge)$\to$(Campaign).
+    \item The entry point is the Creator class, then we identify the category through Campaign and get the highest average pledge amount in the Pledge class. The query path is (Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of the categories.
     \item To identify the top 10 creators per month in the last year by number of successful campaigns, the entry point is the class Campaign. Campaigns are filtered by successful and end\_date within the last year, and then grouped by the month of end\_date and by their creator, navigating to the Creator class to order and select the top 10 creators for each month. So, the query path is (Campaign)$\underset{createdBy}{\to}$(Creator).
 \end{enumerate} 
 
@@ -84,49 +84,49 @@ The workload is shown in Figure \ref{fig:workload}
      \label{fig:logical}
 \end{figure}
 
-The figure \ref{fig:workload} shows the navigational path for the three worloads:
+Figure \ref{fig:workload} shows the navigational paths for the three workloads:
 \begin{itemize}
-    \item Q1:(Pledge)$\to$(Campaign)
-    \item Q2:((Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of categories
-    \item Q3:((Campaign)$\underset{createdBy}{\to}$(Creator)
+    \item Q1: (Pledge)$\to$(Campaign)
+    \item Q2: (Creator)$\underset{creator}{\to}$(Campaign)$\to$(Pledge) and Campaign$\underset{category}{\to}$Category to identify the titles of categories
+    \item Q3: (Campaign)$\underset{createdBy}{\to}$(Creator)
 \end{itemize}
 
-The figure \ref{fig:logical} reports the logical model that we have realized taking into account the above operations.
-The first operation uses Pledge as an entry point, the second uses Creator and the third uses Campaign,
-Q1 and Q2 are in conflict because they have different directions, however the Campaign is used in all the workloads.
-Furthermore, given that a Pledge can be assigned to only one Campaign we suggest using Campaign as an entry point and thus  as a collection and embedding 
-pledge in it without risk of duplication.
-To improve the performance of the second operation (Campaign $\to$ Category) we embedded category inside the Campaign
-so we can avoid the lookup operation, it can introduce duplication but it is considered acceptable.
-Regarding the third operation (Campaign $\to$ Creator), which uses Campaign as entry point, it confirms
-the need to use campaign as a collection and Creator as a reference using a lookup to avoid duplication of Creators.
-The feedback collection has been embedded within campaign, given that there is a one-to-many relationship 
-between campaign and feedback, and to avoid duplication we use a reference to the Member class. 
+Figure \ref{fig:logical} reports the logical model that we have designed, taking into account the above operations.
+The first operation uses Pledge as an entry point, the second uses Creator, and the third uses Campaign.
+Q1 and Q2 are in conflict because they have different directions; however, Campaign is used in all the workloads.
+Furthermore, given that a Pledge can be assigned to only one Campaign, we suggest using Campaign as an entry point and thus as a collection, embedding 
+Pledge in it without risk of duplication.
+To improve the performance of the second operation (Campaign $\to$ Category), we embedded Category inside Campaign
+so we can avoid the lookup operation; it can introduce duplication, but it is considered acceptable.
+Regarding the third operation (Campaign $\to$ Creator), which uses Campaign as an entry point, it confirms
+the need to use Campaign as a collection and Creator as a reference using a lookup to avoid duplication of Creators.
+The Feedback collection has been embedded within Campaign, given that there is a one-to-many relationship 
+between Campaign and Feedback, and to avoid duplication, we use a reference to the Member class. 
 The Transfer collection has been created as a separate collection because it is
-not included in the most important workloads, we expect that a report or a page will request all transfers
-rarely so we can insert Campaign and Creator as a reference and use the lookup operation for them.
-Finally the Member collection has been created as an entry point and as a separate collection, embedding in it 
-its specializations Creator and Member. Optional contact information has been embedded in it but there are further
+not included in the most important workloads. We expect that a report or a page will request all transfers
+rarely, so we can insert Campaign and Creator as references and use the lookup operation for them.
+Finally, the Member collection has been created as an entry point and as a separate collection, embedding in it 
+its specializations Creator and Backer. Optional contact information has been embedded in it, but there are further
 improvements explained in the next section.
 
 \subsection{Design Patterns}
 First, in order to save computations, we can apply the computed pattern to the attribute amount in Transfer. We can use the extended reference pattern by 
-dupicating the attributes firstName and lastName of Creator in the Campaign class, to make faster the execution of query 2 and 3. 
+duplicating the attributes firstName and lastName of Creator in the Campaign class, to make the execution of queries 2 and 3 faster. 
 We can also apply the subset pattern by creating a separate collection for ContactInformation, which is not involved in the workload, 
 and so we expect that it is accessed less often.
 
 \subsection{Bonus Workload}
 We identified a different workload, which is the following:
 \begin{enumerate}
-    \item identify the top 10 successful campaigns which reached the highest transfer amount    
-    \item identify the top 10 cities with the highest number of backers who promised a pledge
-    \item for each member, identify the number of feedbacks he/she left
+    \item Identify the top 10 successful campaigns that reached the highest transfer amount.    
+    \item Identify the top 10 cities with the highest number of backers who promised a pledge.
+    \item For each member, identify the number of feedbacks he/she left.
 \end{enumerate}
 
 This workload needs a different logical model, as explained in the following:
 \begin{itemize}
-    \item For query 1, i should embed Transfer into Campaign to make the query efficient, because otherwise I would have to do a lookup operation for all the successful campaigns.
-    \item For query 2, I should embed Pledge into Backer instead of Campaign, because in this way I avoid to do the lookup operation (the backers are potentially 100.000, so it would be costly).
-    \item For query 3 I should embed Feedback in Member instead of Campaign, because otherwise I would need to do a lookup, and it is also easier to access a maximum of 100.000 documents instead of 2 millions.
+    \item For query 1, we should embed Transfer into Campaign to make the query efficient, because otherwise we would have to do a lookup operation for all the successful campaigns.
+    \item For query 2, we should embed Pledge into Backer instead of Campaign, because in this way we avoid doing the lookup operation (the backers are potentially 100,000, so it would be costly).
+    \item For query 3, we should embed Feedback in Member instead of Campaign, because otherwise we would need to do a lookup, and it is also easier to access a maximum of 100,000 documents instead of 2 million.
 \end{itemize}
 \end{document}
