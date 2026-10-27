@@ -116,10 +116,17 @@ We can also apply the subset pattern by creating a separate collection for Conta
 and so we expect that it is accessed less often.
 
 \subsection{Bonus Workload}
-My suggestion:
+We identified a different workload, which is the following:
+\begin{enumerate}
+    \item identify the top 10 successful campaigns which reached the highest transfer amount    
+    \item identify the top 10 cities with the highest number of backers who promised a pledge
+    \item for each member, identify the number of feedbacks he/she left
+\end{enumerate}
 
-Embedding Transfer into Campaign, because the asociation between Transfer and Campaign is one to many, and Transfer is in
-the side many. An other reason is to make the computed pattern more efficient, because otherwise I would have to make the
-lookup every time the amount in Transfer is updated.
-
+This workload needs a different logical model, as explained in the following:
+\begin{itemize}
+    \item For query 1, i should embed Transfer into Campaign to make the query efficient, because otherwise I would have to do a lookup operation for all the successful campaigns.
+    \item For query 2, I should embed Pledge into Backer instead of Campaign, because in this way I avoid to do the lookup operation (the backers are potentially 100.000, so it would be costly).
+    \item For query 3 I should embed Feedback in Member instead of Campaign, because otherwise I would need to do a lookup, and it is also easier to access a maximum of 100.000 documents instead of 2 millions.
+\end{itemize}
 \end{document}
