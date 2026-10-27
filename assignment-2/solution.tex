@@ -27,13 +27,19 @@
 \maketitle
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/workloadv6.png}
+    \includegraphics[width=0.9\textwidth]{figures/workloadv7.png}
     \caption{Conceptual Diagram}
      \label{fig:workload}
 \end{figure}
+\section{Solution}
 The class Member has been chosen as a generalization of the classes Creator and Backer, because this simplifies the identification of a member, and it is also useful to implement feedback and contact information. To each member is associated zero or one Contact information. Both Creator and Backer classes are associated with the class Campaign. A campaign can be created by only a creator. A backer can promise pledges, modeled by the association Pledges, to a number of campaigns between 200 and 3000, with an average of 1000, as specified in the text. The attributes of Pledge are the amount, timestamp and transfer, a boolean attribute which determines if the promised amount is transferred. Pledge is connected to Transfer class, a class which represents the transfer of money, by the association transferredTo: more pledges can be transferred to a transfer, but each pledge can be associated only to a transfer. The class Category associated with campaign has the purpose of answering the second query, which otherwise would not be able to execute. A campaign can be associated to only one category, while a category can be associated with more campaigns. Finally, we have the class Feedback, which is a weak class identified by Member and Campaign. This class has a maximum of 2 billion instances, because we have annually 100.000 users and 2 millions of campaigns, so the multiplication of the number of users times the number of campaigns gives 2 billion total possible feedbacks per year. Of course 2 millions of feedbacks can be left by a user, while a user can be associated only with its feedbacks, and each campaign can receive 100.000 feedbacks, which is also the number of users, while a campaign is associated only with its feedbacks.
 
-\section{Solution}
+
+In the diagram we have considered the following structured types:
+\begin{itemize}
+    \item cardType: {Visa, Mastercard, American Express}
+    \item periodType: Date x Date
+\end{itemize}
 \subsection{Assumption}
 \begin{enumerate}
 \item First, we assume that the conceptual class diagram reports the annual amount of instances for classes and relations.
@@ -41,7 +47,9 @@ The class Member has been chosen as a generalization of the classes Creator and 
 \item As the campaign period ends, and the system determines whether the campaign is successful, the attribute successful of the class Campaign is set to True
 \item The attribute successful of Campaig has a default value of false
 \item We assume the user will login to the platform using a email and a password, so we set email as key of the Member class
-
+\item We assume that the same backer can make multiple pledges to the same campaign with each pledge recorded separately along with its amount and timestamp.
+\item A feedback may be submitted only for successful campaigns. The campaign creator and each participating backer may submit at most one feedback item per campaign. 
+\item We assume the the Categories can changes, and new categories can be addedd over time. 
 \end{enumerate}
 \subsection{Constraints}
 The following constraints can be identified in the considered domain. Note that we report only the
