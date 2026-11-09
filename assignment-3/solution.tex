@@ -1,0 +1,232 @@
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{lipsum}
+\usepackage{multirow}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{xcolor}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem} 
+% Custom color scheme
+\definecolor{delim}{RGB}{20,105,176}
+\definecolor{numb}{RGB}{106, 115, 125}
+\definecolor{string}{RGB}{163, 21, 21}
+\definecolor{comment}{RGB}{0, 128, 0}
+\definecolor{keyword}{RGB}{0, 0, 255}
+\begin{document}
+
+\title{New Generation Data Models and DBMSs Course - Assignment 3 - NoSQL Queries}
+
+\author*[1]{\fnm{Carlo} \sur{Falchi (Matr. 67340A)}}\email{carlo.falchi@studenti.unimi.it}
+\author*[1]{\fnm{Francesco} \sur{Palladini (Matr. 85652A)}}\email{francesco.palladini@studenti.unimi.it}
+\affil[1]{\orgdiv{Department of Computer Science}, \orgname{University of Milan}, \country{Italy}}
+\lstdefinelanguage{json}{
+    basicstyle=\small\ttfamily,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{white},
+    commentstyle=\color{comment}\itshape,
+    morecomment=[s]{/*}{*/},
+    morecomment=[l]{//},
+    stringstyle=\color{string},
+    morestring=[b]"
+}
+\maketitle
+
+\section{Assignment}
+\begin{enumerate}
+\item For each university, identify the name, kind and city of the university that are located in California or Massachusetts along with the name, cfu, teacher surname and number of participants of the courses that it offers.
+\item For each university, identify the teachers that teach the top three courses in terms of number of participants.
+\item Identify the students that passed all their exams for courses with a written text with an average mark above 27.
+\item For each course, report the list of students that participated to the course. Report also the number of students that passed the course with a mark between 18 and 23, between 24 and 27, and above 27. Report also the number of students that did not pass the course.
+\item Identify the pair of students that are friend of a friend (i.e. a student should be associated with the friends of his friends).
+\end{enumerate}
+\subsection{First Query}
+For each university, identify the name, kind and city of the university that are located in California or Massachusetts along with the name, cfu, teacher surname and number of participants of the courses that it offers.
+\begin{enumerate}[label=(\alph*)]
+\item Explanation
+\end{enumerate}
+\begin{lstlisting}[language=json]
+db.university.aggregate([
+    { "$match": 
+        { "state": { "$in": ["California", "Massachusetts"] } } 
+    },
+    {"$lookup": {
+      "from": "course", "localField": "_id", "foreignField": "university", "as": "courses",
+      "pipeline": [{ "$project": { "_id": 0, "name": 1, "cfu": 1, "teacher": "$teacher.surname", "numPartecipants": { "$size": "$participants" } } }]
+    }},
+    {"$project": 
+        { "_id": 0, "name": 1, "kind": 1, "city": 1, "courses": 1 } 
+    }
+])
+\end{lstlisting}
+
+\subsection{Second Query}
+For each university, identify the teachers that teach the top three courses in terms of number of participants.
+\begin{enumerate}[label=(\alph*)]
+\item Explanation
+\end{enumerate}
+\begin{lstlisting}[language=json]
+db.course.aggregate([
+  { "$addFields": { "numParticipants": { "$size": "$participants" } } },
+  { "$group": { "_id": { "univ": "$university", "name": "$teacher.name", "surname": "$teacher.surname" }, "maxParticipants": { "$max": "$numParticipants" } } },
+  { "$sort": { "maxParticipants": -1 } },
+  { "$group": { "_id": "$_id.univ", "teachers": { "$firstN": { "input": { "name": "$_id.name", "surname": "$_id.surname" }, "n": 3 } } } },
+  { "$lookup": { "from": "university", "localField": "_id", "foreignField": "_id", "as": "univ" } },
+  { "$unwind": { "path": "$univ" } },
+  { "$project": { "name": "$univ.name", "teachers": "$teachers" } }
+])
+\end{lstlisting}
+\subsection{Third Query}
+Identify the students that passed all their exams for courses with a written text with an average mark above 27.
+\begin{enumerate}[label=(\alph*)]
+\item Explanation
+\end{enumerate}
+\begin{lstlisting}[language=json]
+db.student.aggregate([
+  { $unwind: "$exams" },
+  {
+    $lookup: {
+      from: "course",
+      localField: "exams.course",
+      foreignField: "_id",
+      as: "course",
+      pipeline: [{ $project: { exam_type: 1 } }]
+    }
+  },
+  { $match: { "course.exam_type": "Written" } },
+  {
+    $group: {
+      _id: "$_id",
+      average: { $avg: "$exams.mark" },
+      name: { $first: "$name" },
+      surname: { $first: "$surname" }
+    }
+  },
+  { $match: { average: { $gt: 27 } } },
+  { $project: { _id: 0, average: 0 } }
+])
+\end{lstlisting}
+\subsection{Fourth Query}
+For each course, report the list of students that participated to the course. Report also the number of students that passed the course with a mark between 18 and 23, between 24 and 27, and above 27. Report also the number of students that did not pass the course.
+\begin{enumerate}[label=(\alph*)]
+\item Explanation
+\end{enumerate}
+\begin{lstlisting}[language=json]
+db.course.aggregate([
+  { $unwind: "$participants" },
+  {
+    $lookup: {
+      from: "student",
+      localField: "participants",
+      foreignField: "_id",
+      as: "student"
+    }
+  },
+  { $unwind: "$student" },
+  {
+    $addFields: {
+      currentCourseExam: {
+        $first: {
+          $filter: {
+            input: "$student.exams",
+            as: "exam",
+            cond: { $eq: ["$$exam.course", "$_id"] }
+          }
+        }
+      }
+    }
+  },
+  {
+    $addFields: {
+      didntPassExam: {
+        $cond: [{ $not: ["$currentCourseExam"] }, 1, 0]
+      },
+      passedwith18to23: {
+        $cond: [
+          {
+            $and: [
+              { $gte: ["$currentCourseExam.mark", 18] },
+              { $lte: ["$currentCourseExam.mark", 23] }
+            ]
+          },
+          1,
+          0
+        ]
+      },
+      passedwith24to27: {
+        $cond: [
+          {
+            $and: [
+              { $gte: ["$currentCourseExam.mark", 24] },
+              { $lte: ["$currentCourseExam.mark", 27] }
+            ]
+          },
+          1,
+          0
+        ]
+      },
+      passedabove27: {
+        $cond: [{ $gt: ["$currentCourseExam.mark", 27] }, 1, 0]
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$_id",
+      name: { $first: "$name" },
+      participants: { $push: "$student" },
+      total_passedwith18to23: { $sum: "$passedwith18to23" },
+      total_passedwith24to27: { $sum: "$passedwith24to27" },
+      total_passedabove27: { $sum: "$passedabove27" },
+      total_didntPassExam: { $sum: "$didntPassExam" }
+    }
+  }
+])
+\end{lstlisting} 
+\subsection{Fifth Query}
+Identify the pair of students that are friend of a friend (i.e. a student should be associated with the friends of his friends).
+\begin{enumerate}[label=(\alph*)]
+\item Explanation
+\end{enumerate}
+\begin{lstlisting}[language=json]
+db.student.aggregate(
+[
+    { $unwind: "$friends" },
+    { 
+        $lookup: { from: "student", localField: "friends", foreignField: "_id", as: "friend_info" } 
+    },
+    { $unwind: "$friend_info" },
+    { $unwind: "$friend_info.friends" },
+    { 
+        $group: { 
+            _id: { _id: "$_id", friendOfFriendId: "$friend_info.friends" }, 
+            name: { $first: "$name" }, 
+            surname: { $first: "$surname" } 
+        } 
+    },
+    { 
+        $lookup: { from: "student", localField: "_id.friendOfFriendId", foreignField: "_id", as: "friendoffriend" } 
+    },
+    { $unwind: "$friendoffriend" },
+    { $project: { _id: 0, name: 1, surname: 1, friendofFriendName: "$friendoffriend.name", friendofFriendSurname: "$friendoffriend.surname" } }
+])    
+\end{lstlisting} 
+
+\end{document}
