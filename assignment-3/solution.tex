@@ -60,27 +60,60 @@
 \subsection{First Query}
 For each university, identify the name, kind and city of the university that are located in California or Massachusetts along with the name, cfu, teacher surname and number of participants of the courses that it offers.
 \begin{enumerate}[label=(\alph*)]
-\item Explanation
+\item First, we filter out only the universities in California or Massachusetts
+\item The document is then joined according to the "\_id" to associate all the courses of each university
+\item The field courses is unwind to get the single element of the array
+\item A new field is added to calculate the number of participants for that course
+\item The group by operation is needed to group all the university's courses for each university \_id
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.university.aggregate([
-    { "$match": 
-        { "state": { "$in": ["California", "Massachusetts"] } } 
-    },
-    {"$lookup": {
-      "from": "course", "localField": "_id", "foreignField": "university", "as": "courses",
-      "pipeline": [{ "$project": { "_id": 0, "name": 1, "cfu": 1, "teacher": "$teacher.surname", "numPartecipants": { "$size": "$participants" } } }]
-    }},
-    {"$project": 
-        { "_id": 0, "name": 1, "kind": 1, "city": 1, "courses": 1 } 
+  {
+    $match: {
+      $or: [
+        { state: "California" },
+        { state: "Massachusetts" }
+      ]
     }
+  },
+  {
+    $lookup: {
+      from: "course",
+      localField: "_id",
+      foreignField: "university",
+      as: "courses"
+    }
+  },
+  {
+    $unwind: { path: "$courses" }
+  },
+  {
+    $addFields: {
+      numPartecipants: { $size: "$courses.participants" }
+    }
+  },
+  {
+    $group: {
+      _id: "$_id",
+      name: { $first: "$name" },
+      kind: { $first: "$kind" },
+      city: { $first: "$city" },
+      courses: { $push: "$courses" }
+    }
+  }
 ])
 \end{lstlisting}
 
 \subsection{Second Query}
 For each university, identify the teachers that teach the top three courses in terms of number of participants.
 \begin{enumerate}[label=(\alph*)]
-\item Explanation
+\item First, we add a field that counts the number of participants for every course
+\item Then we group by University and Teacher Name and Surname, counting for each one the course with the max number of participants
+\item Sort the documents list in descending order
+\item We group again by university to limit to the first 3 teacher for each university
+\item The document is joined according to the \_id field which is the university id, to associate the university info
+\item We got an array with one element so we unwind it
+\item Finally, we show only the requested fields: University Name and the related Teachers
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.course.aggregate([
