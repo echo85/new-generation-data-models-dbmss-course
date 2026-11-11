@@ -129,7 +129,12 @@ db.course.aggregate([
 \subsection{Third Query}
 Identify the students that passed all their exams for courses with a written text with an average mark above 27.
 \begin{enumerate}[label=(\alph*)]
-\item Explanation
+\item First, we do an unwind of the exams to get one for each document
+\item The document is joined with the related course for each exam passed by the student
+\item We use a match stage to filter out only the written exams
+\item We group by the student to calculate the average of the resulting exams
+\item Filter out only the students that have an average above 27 
+\item We remove the unrequested fields by project stage
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.student.aggregate([
@@ -159,7 +164,12 @@ db.student.aggregate([
 \subsection{Fourth Query}
 For each course, report the list of students that participated to the course. Report also the number of students that passed the course with a mark between 18 and 23, between 24 and 27, and above 27. Report also the number of students that did not pass the course.
 \begin{enumerate}[label=(\alph*)]
-\item Explanation
+\item First, we do an unwind of the participants to get an element for the document
+\item Then, we join according to the participants field in order to associate the related student info
+\item Given that we got an array of students, we do unwind to extract the only object element in the array
+\item To keep track only of exam related to the course document within the exams student array, we extract it as new fields using the \$filter expression
+\item For each document, we calculate those that respect the requested range of marks.
+\item Finally, we group by course to give a sum of the requested numbers.
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.course.aggregate([
@@ -236,7 +246,7 @@ db.course.aggregate([
 \subsection{Fifth Query}
 Identify the pair of students that are friend of a friend (i.e. a student should be associated with the friends of his friends).
 \begin{enumerate}[label=(\alph*)]
-\item Explanation
+\item TODO Explanation
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.student.aggregate(
