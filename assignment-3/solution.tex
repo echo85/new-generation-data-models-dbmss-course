@@ -246,7 +246,12 @@ db.course.aggregate([
 \subsection{Fifth Query}
 Identify the pair of students that are friend of a friend (i.e. a student should be associated with the friends of his friends).
 \begin{enumerate}[label=(\alph*)]
-\item TODO Explanation
+\item First, we unwind the list of friends
+\item Then, we associate the friend info with the student collection
+\item Given that friend_info is an array, we unwind it to get the only element of the array, and then we unwind the friends of friends
+\item We then group by id and the friends of friends to avoid duplicates
+\item We join the student collection related to the friend of friend and unwind it
+\item Finally, we project the requested fields
 \end{enumerate}
 \begin{lstlisting}[language=json]
 db.student.aggregate(
